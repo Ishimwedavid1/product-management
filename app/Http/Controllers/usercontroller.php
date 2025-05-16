@@ -10,6 +10,7 @@ use App\Models\categorymodel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\session;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class usercontroller extends Controller
 {
@@ -21,7 +22,7 @@ class usercontroller extends Controller
         ]);
         $user=User::create($data);
         Auth::login($user);
-        return redirect()->route('home');
+        return redirect()->route('/home');
     }
     public function signin(Request $request){
          $data=$request->validate([
@@ -31,7 +32,7 @@ class usercontroller extends Controller
 
         if (Auth::attempt($data)) {
           $request->session()->regenerate();
-          return redirect()->route('home');
+          return redirect()->route('/home');
         } else {
             return back();
         }
@@ -41,15 +42,42 @@ class usercontroller extends Controller
       $request->session()->invalidate();
       $request->session()->regenerateToken();
 
-      return redirect()->route('home');
+      return redirect()->route('/home');
+    }
+    //home
+  public function home(){
+    $products = productmodel::with('category')->get();
+    $productouts = productoutmodel::with('product.category')->get(); // add relations
+
+    $totalProductsIn = $products->count();
+    $totalQuantityIn = $products->sum('quantity');
+    $totalProductsOut = $productouts->count();
+    $totalQuantityOut = $productouts->sum('quantity');
+
+    return view('home', compact(
+        'products', 
+        'productouts', 
+        'totalProductsIn', 
+        'totalQuantityIn', 
+        'totalProductsOut', 
+        'totalQuantityOut'
+    ));
+}
+
+
+public function product(Request $request)
+{
+    $query = productmodel::with('category');
+
+    if ($request->has('search')) {
+        $query->where('name', 'like', '%' . $request->search . '%');
     }
 
-    public function product()
-    {
-        // <!-- $products= productmodel::all(); -->
-         $products=productmodel::with('category')->get(); 
-        return view('product', compact('products'));
-    }
+    $products = $query->paginate(10); // ✅ paginate directly on query builder
+
+    return view('product', compact('products'));
+}
+
    public function create(Request $request){
        $data=$request->validate([
             'name'=>'required',
@@ -117,14 +145,24 @@ class usercontroller extends Controller
     return redirect()->route('category')->with('success','category deleted successfuly');
   }
    
-            //report
-    public function dash(){
-        $categories=categorymodel::with('products')->get();
-        return view('dash',compact('categories'));
+  public function dash(){
+      $categories=categorymodel::all();
+      $products=productmodel::all();
+      $productouts=productoutmodel::all(); 
+      return view('dash',compact('categories','products','productouts'));
     }
+//   public function home(){
+//       $categories=categorymodel::all();
+//       $products=productmodel::all();
+//       $productouts=productoutmodel::all(); 
+//       return view('/',compact('categories','products','productouts'));
+//     }
+    
+    //report
     public function report(){
         $products=productmodel::all();
-        return view('report',compact('products'));
+        $productouts=productoutmodel::all();
+        return view('report',compact('products','productouts'));
     }
     // productout table
    public function productout(){

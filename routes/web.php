@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\usercontroller;
 use App\Models\productmodel;
+use App\Models\productoutmodel;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +19,11 @@ use App\Models\productmodel;
 Route::get('/', function () {
     return view('home');
 })->name('home');
+
+// Route::get('/', function () {
+//    return view('/home');
+// })->name('home')->middleware('guest');
+
 Route::get('/signup', function () {
     return view('signup');
 })->name('signup')->middleware('guest');
@@ -41,7 +47,7 @@ Route::get('/report', function () {
 })->middleware('auth');
 
 
-
+Route::get('/home',[usercontroller::class,'home'])->name('home')->middleware('auth');
 
 Route::post('/signup',[usercontroller::class,'signup'])->name('signup')->middleware('guest');
 Route::post('/signin',[usercontroller::class,'signin'])->name('signin')->middleware('guest');
@@ -77,11 +83,9 @@ Route::delete('/productout{productout}/deleteout',[usercontroller::class,'delete
 
 
 
-
-
-
 //dashboard
 Route::get('/dash',[usercontroller::class,'dash'])->name('dash')->middleware('auth');
+// Route::get('/home',[usercontroller::class,'home'])->name('home')->middleware('auth');
 
 //report
 Route::get('/report',[usercontroller::class, 'report'])->name('report')->middleware('auth');

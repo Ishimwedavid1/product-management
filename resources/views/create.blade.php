@@ -98,7 +98,7 @@
         </select><br><br>
     
         <button type="submit">Add Product</button>
-        <h4><a href="/product">Back to product</a></h4>
+        <h4><a href="/product">cancel</a></h4>
         
         @if ($errors->any())
             <ul>

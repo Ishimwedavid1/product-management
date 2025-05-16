@@ -7,32 +7,11 @@
     <title>PRODUCT REPORT</title>
 </head>
 <body>
-        <h1>PRODUCT REPORT</h1>
-    {{-- @foreach ($categories as $category)
-    <h2>{{$category->category_name}}</h2>
-    @if ($category->products->count())
+    <a href="/home">back home</a>
+        <h1>Product Report</h1>
     <table border="2" cellpadding="5">
-        <tr>
-            <th>Product Name</th>
-            <th>Quantity</th>
-            <th>price</th>
-        <tr>
-            @foreach ($category->products as $product )
-                 </tr>
-                    <td>{{$product->name}}</td>
-                    <td>{{$product->quantity}}</td>
-                    <td>{{$product->price}}</td>
-                </tr>
-           @endforeach
-    </table>
-    @else
-        <p>No product in this category.</p>
-    @endif
-
-        @endforeach
-        //d --}}
-    <table border="2" cellpadding="5">
-        <tr>
+        <tr
+        >
             <th>Category Name</th>
             <th>Product Name</th>
             <th>Quantity</th>
@@ -45,7 +24,24 @@
                     <td>{{$product->quantity}}</td>
                     <td>{{$product->price}}</td>
                 </tr>
-           @endforeach
+                @endforeach
+            </table>
+            <h1>Product Out Report</h1>
+            <table border="2">
+                <tr>
+            <th>Category Name</th>
+            <th>Product Out Name</th>
+            <th>QUANTITY</th>
+            <th>DATE</th>
+        </tr>
+        @foreach ($productouts as $productout)
+                <tr>
+                    <td>{{$productout->product->category->category_name}}</td>
+                    <td>{{$productout->product->name}}</td>
+                    <td>{{$productout->quantity}}</td>
+                    <td>{{$productout->date}}</td>
+                 </tr>
+            @endforeach
     </table>
 </body>
 </html>
